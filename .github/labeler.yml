@@ -1,0 +1,17 @@
+# Define labels and their corresponding color codes
+labels:
+  - name: bug
+    color: ff0000
+  - name: enhancement
+    color: 00ff00
+  - name: documentation
+    color: 0000ff
+
+# Define rules for automatically applying labels to pull requests
+rules:
+  - match: fix
+    labels: [bug]
+  - match: feature
+    labels: [enhancement]
+  - match: doc
+    labels: [documentation]
