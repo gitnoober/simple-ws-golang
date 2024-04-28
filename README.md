@@ -1,4 +1,4 @@
-## Websets in Golang
+## Websocket - Golang
 
 <ul>
     <li>
