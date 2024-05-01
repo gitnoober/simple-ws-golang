@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 
 	"github.com/gorilla/websocket"
 
@@ -64,15 +65,35 @@ func ListenForWS(conn *WebSocketConnection) {
 	}
 }
 
+// ListenToWSChannel listens to the channel for payload and broadcasts it to all users.
 func ListenToWSChannel() {
 	var response WSJsonResponse
 	for {
 		e := <-wsChan
 
-		response.Action = "Got here"
-		response.Message = fmt.Sprintf("Some message, and action was %s", e.Action)
-		BroadcastToAll(response)
+		switch e.Action {
+		case "username":
+			//get a list of all users and send it back
+			clients[e.Conn] = e.UserName
+			allUsers := GetUserList()
+			response.Action = "list_users"
+			response.ConnectedUsers = allUsers
+			BroadcastToAll(response)
+		}
+
+		//response.Action = "Got here"
+		//response.Message = fmt.Sprintf("Some message, and action was %s", e.Action)
+		//BroadcastToAll(response)
 	}
+}
+
+func GetUserList() []string {
+	var UserList []string
+	for _, client := range clients {
+		UserList = append(UserList, client)
+	}
+	sort.Strings(UserList)
+	return UserList
 }
 
 func BroadcastToAll(response WSJsonResponse) {
@@ -89,9 +110,10 @@ func BroadcastToAll(response WSJsonResponse) {
 
 // WSJsonResponse Defines the response send back from the websocket
 type WSJsonResponse struct {
-	Action      string `json:"action"`
-	Message     string `json:"message"`
-	MessageType string `json:"message_type"`
+	Action         string   `json:"action"`
+	Message        string   `json:"message"`
+	MessageType    string   `json:"message_type"`
+	ConnectedUsers []string `json:"connected_users"`
 }
 
 type WSPayload struct {
