@@ -79,8 +79,22 @@ func ListenToWSChannel() {
 			response.Action = "list_users"
 			response.ConnectedUsers = allUsers
 			BroadcastToAll(response)
-		}
 
+		case "left":
+			//delete user from map
+			response.Action = "list_users"
+			delete(clients, e.Conn)
+			users := GetUserList()
+			response.ConnectedUsers = users
+			BroadcastToAll(response)
+
+		case "broadcast":
+			// broadcast message to all users
+			response.Action = "broadcast"
+			response.Message = "<strong>" + e.UserName + "</strong>: " + e.Message
+			BroadcastToAll(response)
+
+		}
 		//response.Action = "Got here"
 		//response.Message = fmt.Sprintf("Some message, and action was %s", e.Action)
 		//BroadcastToAll(response)
@@ -90,7 +104,9 @@ func ListenToWSChannel() {
 func GetUserList() []string {
 	var UserList []string
 	for _, client := range clients {
-		UserList = append(UserList, client)
+		if client != "" {
+			UserList = append(UserList, client)
+		}
 	}
 	sort.Strings(UserList)
 	return UserList
