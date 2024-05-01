@@ -17,4 +17,6 @@
 
 <hr>
 
+![Image Alt Text](static/image.png)
+
 ###### Note- Listens to port: 8080
