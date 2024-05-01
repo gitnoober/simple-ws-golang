@@ -75,9 +75,9 @@ func ListenToWSChannel() {
 		case "username":
 			//get a list of all users and send it back
 			clients[e.Conn] = e.UserName
-			users := GetUserList()
+			allUsers := GetUserList()
 			response.Action = "list_users"
-			response.ConnectedUsers = users
+			response.ConnectedUsers = allUsers
 			BroadcastToAll(response)
 		}
 
